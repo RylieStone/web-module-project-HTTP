@@ -6,7 +6,7 @@ import axios from 'axios';
 
 const EditMovieForm = (props) => {
   const navigate = useNavigate();
-
+  const {id} = useParams()
   const { setMovies } = props;
   const [movie, setMovie] = useState({
     title: "",
@@ -15,7 +15,15 @@ const EditMovieForm = (props) => {
     metascore: 0,
     description: ""
   });
-
+  useEffect(() => {
+    axios.get(`http://localhost:9000/api/movies/${id}`)
+      .then(res => {
+        setMovie(res.data);
+      })
+      .catch(err => {
+        console.log(err.response);
+      })
+  }, [id]);
   const handleChange = (e) => {
     setMovie({
       ...movie,
@@ -28,6 +36,14 @@ const EditMovieForm = (props) => {
     // Make your put request here
     // On success, set the updated movies in state
     // and also navigate the app to the updated movie path
+    axios.put(`http://localhost:9000/api/movies/${id}`, movie)
+      .then(res => {
+        navigate(`/movies/${id}`)
+        setMovies(res.data)
+      })
+      .catch(err => {
+        console.log(err.response);
+      })
   }
 
   const { title, director, genre, metascore, description } = movie;
